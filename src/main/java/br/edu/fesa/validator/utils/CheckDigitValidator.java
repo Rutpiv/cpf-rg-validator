@@ -1,5 +1,8 @@
 package br.edu.fesa.validator.utils;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class CheckDigitValidator {
 
   public String validarDigitosCPF(String cpf) {

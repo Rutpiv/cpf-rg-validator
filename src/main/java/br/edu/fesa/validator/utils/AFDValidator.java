@@ -2,10 +2,12 @@ package br.edu.fesa.validator.utils;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.stereotype.Component;
 
 /**
  * @author 081220023 &
  */
+@Component
 public class AFDValidator {
 
   public enum Estado {
