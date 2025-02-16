@@ -1,4 +1,4 @@
-package br.edu.fesa.validator.service;
+package br.edu.fesa.validator.utils;
 
 import java.util.HashMap;
 import java.util.Map;
