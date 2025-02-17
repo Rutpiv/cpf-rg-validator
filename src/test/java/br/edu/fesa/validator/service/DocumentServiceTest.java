@@ -39,7 +39,7 @@ public class DocumentServiceTest {
 
   // ====================== Testes para CPF ======================
 
-  // Caso 1: CPF com pontuação completa (ex.: 123.456.789-09) – Deve ser válido
+  // Caso 1: CPF com pontuação completa (ex.: 811.835.170-09) – Deve ser válido
   @Test
   void validateCPF_ValidFullPunctuation() {
     String cpf = "811.835.170-09";
@@ -52,7 +52,7 @@ public class DocumentServiceTest {
     assertEquals("Documento válido", result.getMensagem());
   }
 
-  // Caso 2: CPF com pontuação incompleta (ex.: 123.456789-09) – Deve ser válido
+  // Caso 2: CPF com pontuação incompleta (ex.: 811.835170-09) – Deve ser válido
   @Test
   void validateCPF_ValidIncompletePunctuation() {
     String cpf = "811.835170-09";
@@ -65,7 +65,7 @@ public class DocumentServiceTest {
     assertEquals("Documento válido", result.getMensagem());
   }
 
-  // Caso 3: CPF sem pontuação (ex.: 12345678909) – Deve ser válido
+  // Caso 3: CPF sem pontuação (ex.: 81183517009) – Deve ser válido
   @Test
   void validateCPF_ValidNoPunctuation() {
     String cpf = "81183517009";
@@ -125,7 +125,7 @@ public class DocumentServiceTest {
 
   // ====================== Testes para RG ======================
 
-  // Caso 1: RG com pontuação completa (ex.: 12.345.678-9) – Deve ser válido
+  // Caso 1: RG com pontuação completa (ex.: 34.998.152-8) – Deve ser válido
   @Test
   void validateRG_ValidFullPunctuation() {
     String rg = "34.998.152-8";
@@ -138,7 +138,7 @@ public class DocumentServiceTest {
     assertEquals("Documento válido", result.getMensagem());
   }
 
-  // Caso 2: RG com pontuação incompleta (ex.: 12.345678-9) – Deve ser válido
+  // Caso 2: RG com pontuação incompleta (ex.: 34.998152-8) – Deve ser válido
   @Test
   void validateRG_ValidIncompletePunctuation() {
     String rg = "34.998152-8";
@@ -151,7 +151,7 @@ public class DocumentServiceTest {
     assertEquals("Documento válido", result.getMensagem());
   }
 
-  // Caso 3: RG sem pontuação (ex.: 123456789) – Deve ser válido
+  // Caso 3: RG sem pontuação (ex.: 349981528) – Deve ser válido
   @Test
   void validateRG_ValidNoPunctuation() {
     String rg = "349981528";
@@ -164,10 +164,10 @@ public class DocumentServiceTest {
     assertEquals("Documento válido", result.getMensagem());
   }
 
-  // Caso 4: RG com todos os números iguais (ex.: 111111111) – Deve ser inválido
+  // Caso 4: RG com todos os números iguais (ex.: 11.111.111-1) – Deve ser inválido
   @Test
   void validateRG_InvalidAllSameDigits() {
-    String rg = "111111111";
+    String rg = "11.111.111-1";
     when(afdValidator.validarDocumento(rg)).thenReturn("RG válido");
     when(checkDigitValidator.validarDigitosRG(rg)).thenReturn("Dígito verificador do RG inválido");
 
