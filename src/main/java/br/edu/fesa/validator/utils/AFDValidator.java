@@ -4,33 +4,37 @@ import java.util.HashMap;
 import java.util.Map;
 import org.springframework.stereotype.Component;
 
-/**
- * @author 081220023 &
- */
 @Component
 public class AFDValidator {
 
   public enum Estado {
     Q0,
-    q1,
-    q2,
-    q3,
-    q4,
-    q5,
-    q6,
-    q7,
-    q8,
+    Q1,
+    Q2,
+    Q3,
+    Q4,
+    Q5,
+    Q6,
+    Q7,
+    Q8,
     Q9,
-    q10,
+    Q10,
     Q11,
-    q12,
-    q13,
-    q14,
-    q15,
-    q16,
-    q17,
-    q18,
-    Q19
+    Q12,
+    Q13,
+    Q14,
+    Q15,
+    Q16,
+    Q17,
+    Q18,
+    Q19,
+    Q20,
+    Q21,
+    Q22,
+    Q23,
+    Q24,
+    Q25,
+    Q26
   }
 
   private final Map<Estado, Map<Character, Estado>> transicoes = new HashMap<>();
@@ -40,68 +44,76 @@ public class AFDValidator {
   }
 
   private void configurarTransicoes() {
-    // Transições principais
-    transicoes.put(Estado.Q0, criarTransicaoNumeros(Estado.q1));
+    // Transições principais para CPF e RG
+    transicoes.put(Estado.Q0, criarTransicao(Estado.Q1, null, null, null));
 
-    transicoes.put(Estado.q1, criarTransicaoNumeros(Estado.q2));
+    transicoes.put(Estado.Q1, criarTransicao(Estado.Q2, null, null, null));
 
-    transicoes.put(Estado.q2, criarTransicaoComPontuacao(Estado.q3, Estado.q15));
+    transicoes.put(Estado.Q2, criarTransicao(Estado.Q3, null, Estado.Q12, null));
 
-    transicoes.put(Estado.q3, criarTransicaoComPontuacao(Estado.q4, Estado.q12));
+    transicoes.put(Estado.Q3, criarTransicao(Estado.Q4, null, Estado.Q20, null));
 
-    transicoes.put(Estado.q4, criarTransicaoNumeros(Estado.q5));
-    transicoes.put(Estado.q5, criarTransicaoNumeros(Estado.q6));
+    transicoes.put(Estado.Q4, criarTransicao(Estado.Q5, null, null, null));
+    transicoes.put(Estado.Q5, criarTransicao(Estado.Q6, null, Estado.Q17, null));
 
-    transicoes.put(Estado.q6, criarTransicaoComPontuacao(Estado.q7, Estado.q13));
+    transicoes.put(Estado.Q6, criarTransicao(Estado.Q7, null, Estado.Q25, null));
 
-    transicoes.put(Estado.q7, criarTransicaoNumeros(Estado.q8));
+    transicoes.put(Estado.Q7, criarTransicao(Estado.Q8, null, null, null));
 
-    transicoes.put(Estado.q8, criarTransicaoFinalRG(Estado.Q9, Estado.Q19, Estado.q18));
+    transicoes.put(Estado.Q8, criarTransicao(Estado.Q9, Estado.Q19, null, Estado.Q18));
 
     // Transições para pontuações
-    transicoes.put(Estado.q12, criarTransicaoNumeros(Estado.q4));
-    transicoes.put(Estado.q13, criarTransicaoNumeros(Estado.q7));
-    transicoes.put(Estado.q15, criarTransicaoNumeros(Estado.q16));
-    transicoes.put(Estado.q16, criarTransicaoNumeros(Estado.q17));
-    transicoes.put(Estado.q17, criarTransicaoNumeros(Estado.q6));
+    transicoes.put(Estado.Q12, criarTransicao(Estado.Q13, null, null, null));
+    transicoes.put(Estado.Q13, criarTransicao(Estado.Q14, null, null, null));
+    transicoes.put(Estado.Q14, criarTransicao(Estado.Q15, null, null, null));
+    transicoes.put(Estado.Q15, criarTransicao(Estado.Q16, null, Estado.Q17, null));
+    transicoes.put(Estado.Q16, criarTransicao(Estado.Q7, null, null, null));
+    transicoes.put(Estado.Q17, criarTransicao(Estado.Q16, null, null, null));
 
-    // Transição para hífen
-    transicoes.put(Estado.q18, criarTransicaoFinalRG(Estado.Q9, Estado.Q19, null));
+    // Transições para RG
+    transicoes.put(Estado.Q18, criarTransicao(Estado.Q19, Estado.Q19, null, null));
 
-    // Estado final Q9 (RG)
-    transicoes.put(Estado.Q9, criarTransicaoFinalCPF(Estado.q10, Estado.q14));
+    // Transições para CPF
+    transicoes.put(Estado.Q20, criarTransicao(Estado.Q21, null, null, null));
+    transicoes.put(Estado.Q21, criarTransicao(Estado.Q22, null, null, null));
+    transicoes.put(Estado.Q22, criarTransicao(Estado.Q23, null, null, null));
+    transicoes.put(Estado.Q23, criarTransicao(Estado.Q24, null, Estado.Q25, null));
+    transicoes.put(Estado.Q24, criarTransicao(Estado.Q8, null, null, null));
+    transicoes.put(Estado.Q25, criarTransicao(Estado.Q24, null, null, null));
 
-    transicoes.put(Estado.q10, criarTransicaoNumeros(Estado.Q11));
-    transicoes.put(Estado.q14, criarTransicaoNumeros(Estado.q10));
+    // Estado final CPF
+    transicoes.put(Estado.Q9, criarTransicao(Estado.Q10, null, null, Estado.Q26));
+    transicoes.put(Estado.Q26, criarTransicao(Estado.Q10, null, null, null));
+    transicoes.put(Estado.Q10, criarTransicao(Estado.Q11, null, null, null));
   }
 
-  private Map<Character, Estado> criarTransicaoNumeros(Estado proximo) {
+  private Map<Character, Estado> criarTransicao(
+      Estado digito, Estado x, Estado ponto, Estado hifen) {
     Map<Character, Estado> mapa = new HashMap<>();
-    for (char c = '0'; c <= '9'; c++) {
-      mapa.put(c, proximo);
+
+    // Dígitos 0-9
+    if (digito != null) {
+      for (char c = '0'; c <= '9'; c++) {
+        mapa.put(c, digito);
+      }
     }
-    return mapa;
-  }
 
-  private Map<Character, Estado> criarTransicaoComPontuacao(
-      Estado proxNumero, Estado proxPontuacao) {
-    Map<Character, Estado> mapa = criarTransicaoNumeros(proxNumero);
-    mapa.put('.', proxPontuacao);
-    return mapa;
-  }
+    // Letra X (maiúscula/minúscula)
+    if (x != null) {
+      mapa.put('x', x);
+      mapa.put('X', x);
+    }
 
-  private Map<Character, Estado> criarTransicaoFinalRG(
-      Estado proxNumero, Estado proxX, Estado proxHifen) {
-    Map<Character, Estado> mapa = criarTransicaoNumeros(proxNumero);
-    mapa.put('x', proxX);
-    mapa.put('X', proxX); // Aceita maiúsculo e minúsculo
-    if (proxHifen != null) mapa.put('-', proxHifen);
-    return mapa;
-  }
+    // Pontuação
+    if (ponto != null) {
+      mapa.put('.', ponto);
+    }
 
-  private Map<Character, Estado> criarTransicaoFinalCPF(Estado proxNumero, Estado proxHifen) {
-    Map<Character, Estado> mapa = criarTransicaoNumeros(proxNumero);
-    mapa.put('-', proxHifen);
+    // Hífen
+    if (hifen != null) {
+      mapa.put('-', hifen);
+    }
+
     return mapa;
   }
 
@@ -109,7 +121,7 @@ public class AFDValidator {
     Estado estadoAtual = Estado.Q0;
 
     for (char c : documento.toCharArray()) {
-      c = Character.toLowerCase(c); // Normaliza caracteres
+      c = Character.toLowerCase(c);
       Map<Character, Estado> transicoesEstado = transicoes.get(estadoAtual);
 
       if (transicoesEstado == null || !transicoesEstado.containsKey(c)) {
