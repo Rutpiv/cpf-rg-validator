@@ -8,6 +8,18 @@ public class CheckDigitValidator {
   public String validarDigitosCPF(String cpf) {
     // Implementação da validação dos dígitos do CPF
     int[] numbers = cpf.replaceAll("[^0-9]", "").chars().map(Character::getNumericValue).toArray();
+    
+    // Verifica se todos os dígitos são iguais
+    boolean todosIguais = true;
+    for (int i = 1; i < numbers.length; i++) {
+        if (numbers[i] != numbers[0]) {
+            todosIguais = false;
+            break;
+        }
+    }
+    if (todosIguais) {
+        return "Dígitos verificadores do CPF inválidos";
+    }
 
     // Cálculo do primeiro dígito
     int sum = 0;
