@@ -1,44 +1,58 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" class="scroll-smooth">
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  class="scroll-smooth"
+  x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }"
+  x-init="
+        $watch('darkMode', value => {
+          localStorage.setItem('darkMode', value);
+          document.documentElement.classList.toggle('dark', value);
+        });
+        document.documentElement.classList.toggle('dark', darkMode);
+      "
+  :class="{ 'dark': darkMode }">
   <head>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      .tokyo-bg {
-        background-color: #1a1b26;
-      }
-      .tokyo-text {
-        color: #a9b1d6;
-      }
-      .tokyo-cyan {
-        color: #7dcfff;
-      }
-      .tokyo-pink {
-        color: #f7768e;
-      }
-      .tokyo-purple {
-        color: #bb9af7;
-      }
-
-      [x-cloak] {
-        display: none !important;
-      }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
   </head>
-  <body class="tokyo-bg min-h-screen text-slate-100">
+  <body class="tokyo-bg min-h-screen tokyo-text">
+    <!-- Botão Tema -->
+    <div class="fixed top-4 right-4 z-50">
+      <button
+        @click="darkMode = !darkMode"
+        class="theme-toggle p-2.5 rounded-xl transition-all"
+        aria-label="Alternar tema">
+        <svg class="h-6 w-6 theme-light-hidden" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+        </svg>
+        <svg class="h-6 w-6 theme-dark-hidden" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+        </svg>
+      </button>
+    </div>
+
     <div
       class="container mx-auto p-4 max-w-4xl"
       x-data="{ activeTab: new URLSearchParams(window.location.search).get('modo') || 'single' }">
       <!-- Tabs -->
-      <div class="flex space-x-2 mb-6 border-b border-slate-700">
+      <div class="flex space-x-2 mb-6 border-b tokyo-border">
         <button
           @click="activeTab = 'single'"
-          :class="activeTab === 'single' ? 'border-b-2 border-cyan-400' : 'text-slate-400'"
+          :class="activeTab === 'single' ? 'border-b-2 tokyo-cyan-border' : 'tokyo-text opacity-75'"
           class="px-4 py-2 font-medium transition-colors">
           Validação Única
         </button>
         <button
           @click="activeTab = 'batch'"
-          :class="activeTab === 'batch' ? 'border-b-2 border-cyan-400' : 'text-slate-400'"
+          :class="activeTab === 'batch' ? 'border-b-2 tokyo-cyan-border' : 'tokyo-text opacity-75'"
           class="px-4 py-2 font-medium transition-colors">
           Validação em Lote
         </button>
@@ -46,17 +60,17 @@
 
       <!-- Single Validation -->
       <div x-show="activeTab === 'single'" class="space-y-6">
-        <form method="post" action="/validate" class="bg-slate-800 rounded-lg p-6 shadow-xl">
+        <form method="post" action="/validate" class="tokyo-bg-secondary rounded-xl p-6 shadow-lg">
           <div class="flex gap-3">
             <input
               type="text"
               name="documento"
               th:value="${resultado?.documento}"
-              class="w-full bg-slate-700 rounded-lg px-4 py-3 text-slate-100 focus:ring-2 focus:ring-cyan-400 focus:outline-none"
+              class="w-full tokyo-bg-input rounded-lg px-4 py-3 tokyo-text focus:ring-2 focus:ring-opacity-50 focus:ring-cyan-400 focus:outline-none transition-all"
               placeholder="Digite o documento..." />
             <button
               type="submit"
-              class="bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all">
+              class="tokyo-gradient text-white px-6 py-3 rounded-lg hover:opacity-90 transition-all">
               Validar
             </button>
           </div>
@@ -64,12 +78,10 @@
 
         <div
           th:if="${resultado}"
-          class="bg-slate-800 p-4 rounded-lg border-l-4"
-          :class="${resultado.validado} ? 'border-cyan-400' : 'border-pink-400'">
+          class="tokyo-bg-secondary p-4 rounded-lg border-l-4"
+          :class="${resultado.validado} ? 'tokyo-cyan-border' : 'tokyo-pink-border'">
           <div class="flex items-center gap-3">
-            <span
-              class="text-2xl"
-              th:class="${resultado.validado} ? 'text-cyan-400' : 'text-pink-400'">
+            <span class="text-2xl" th:class="${resultado.validado} ? 'tokyo-cyan' : 'tokyo-pink'">
               [[ ${resultado.validado} ? '✅' : '❌' ]]
             </span>
             <span class="font-medium" th:text="${resultado.mensagem}"></span>
@@ -79,36 +91,42 @@
 
       <!-- Batch Validation -->
       <div x-show="activeTab === 'batch'" class="space-y-6">
-        <form method="post" action="/validate/batch" class="bg-slate-800 rounded-lg p-6 shadow-xl">
+        <form
+          method="post"
+          action="/validate/batch"
+          class="tokyo-bg-secondary rounded-xl p-6 shadow-lg">
           <textarea
             name="documentos"
-            class="w-full bg-slate-700 rounded-lg px-4 py-3 text-slate-100 mb-4 focus:ring-2 focus:ring-cyan-400 focus:outline-none h-48"
+            class="w-full tokyo-bg-input rounded-lg px-4 py-3 tokyo-text mb-4 focus:ring-2 focus:ring-opacity-50 focus:ring-cyan-400 focus:outline-none h-48 transition-all"
             placeholder="Cole os documentos (um por linha)..."></textarea>
           <button
             type="submit"
-            class="bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all w-full">
+            class="tokyo-gradient text-white px-6 py-3 rounded-lg hover:opacity-90 transition-all w-full">
             Validar Tudo
           </button>
         </form>
 
-        <div th:if="${resultados}" class="bg-slate-800 rounded-lg overflow-hidden shadow-xl">
+        <div th:if="${resultados}" class="tokyo-bg-secondary rounded-xl overflow-hidden shadow-lg">
           <table class="w-full">
-            <thead class="bg-slate-700 text-cyan-400">
+            <thead class="tokyo-bg-secondary tokyo-cyan border-b tokyo-border">
               <tr>
                 <th class="px-4 py-3 text-left">Documento</th>
                 <th class="px-4 py-3 text-center">Status</th>
                 <th class="px-4 py-3 text-left">Detalhes</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-600">
-              <tr th:each="result : ${resultados}" class="hover:bg-slate-700/50 transition-colors">
+            <tbody class="divide-y tokyo-divider">
+              <tr th:each="result : ${resultados}" class="hover:tokyo-bg-input transition-colors">
                 <td class="px-4 py-3" th:text="${result.documento}"></td>
                 <td class="px-4 py-3 text-center">
-                  <span th:class="${result.validado} ? 'text-cyan-400' : 'text-pink-400'">
+                  <span th:class="${result.validado} ? 'tokyo-cyan' : 'tokyo-pink'">
                     [[ ${result.validado} ? '✓' : '✕' ]]
                   </span>
                 </td>
-                <td class="px-4 py-3 text-pink-400" th:text="${result.mensagem}"></td>
+                <td
+                  class="px-4 py-3"
+                  th:class="${result.validado} ? 'tokyo-cyan' : 'tokyo-pink'"
+                  th:text="${result.mensagem}"></td>
               </tr>
             </tbody>
           </table>
