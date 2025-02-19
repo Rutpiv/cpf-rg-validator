@@ -5,96 +5,91 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+/** Unit tests for the CheckDigitValidator class. */
 @SpringBootTest
 class CheckDigitValidatorTest {
 
   private final CheckDigitValidator validator = new CheckDigitValidator();
 
-  // ====================== Testes para CPF ======================
+  // ====================== CPF Tests ======================
 
-  // Caso 1: CPF com pontuação completa (ex.: 811.835.170-09) – Deve ser válido
+  // Case 1: CPF with full punctuation (e.g.: 811.835.170-09) – Should be valid
   @Test
-  void validarDigitosCPF_ComPontuacaoCompleta_DeveSerValido() {
-    assertNull(validator.validarDigitosCPF("811.835.170-09"));
+  void validateCPFCheckDigits_FullPunctuation_ShouldBeValid() {
+    assertNull(validator.validateCPFCheckDigits("811.835.170-09"));
   }
 
-  // Caso 2: CPF com pontuação incompleta (ex.: 811.835170-09) – Deve ser válido
+  // Case 2: CPF with incomplete punctuation (e.g.: 811.835170-09) – Should be valid
   @Test
-  void validarDigitosCPF_ComPontuacaoIncompleta_DeveSerValido() {
-    assertNull(validator.validarDigitosCPF("811.835170-09"));
+  void validateCPFCheckDigits_IncompletePunctuation_ShouldBeValid() {
+    assertNull(validator.validateCPFCheckDigits("811.835170-09"));
   }
 
-  // Caso 3: CPF sem pontuação (ex.: 81183517009) – Deve ser válido
+  // Case 3: CPF without punctuation (e.g.: 81183517009) – Should be valid
   @Test
-  void validarDigitosCPF_SemPontuacao_DeveSerValido() {
-    assertNull(validator.validarDigitosCPF("81183517009"));
+  void validateCPFCheckDigits_NoPunctuation_ShouldBeValid() {
+    assertNull(validator.validateCPFCheckDigits("81183517009"));
   }
 
-  // Caso 4: CPF com todos os números iguais (ex.: 111.111.111-11) – Deve ser inválido
+  // Case 4: CPF with all digits equal (e.g.: 111.111.111-11) – Should be invalid
   @Test
-  void validarDigitosCPF_DigitosRepetidos_DeveSerInvalido() {
+  void validateCPFCheckDigits_AllSameDigits_ShouldBeInvalid() {
     assertEquals(
-      "Dígitos verificadores do CPF inválidos",
-      validator.validarDigitosCPF("111.111.111-11")
-    );
+        "Dígitos verificadores do CPF inválidos",
+        validator.validateCPFCheckDigits("111.111.111-11"));
   }
 
-  // Caso 5: CPF com dígitos verificadores inválidos (ex.: 811.835.170-00) - Deve ser inválido
+  // Case 5: CPF with invalid check digits (e.g.: 811.835.170-00) – Should be invalid
   @Test
-  void validarDigitosCPF_DigitosInvalidos_DeveSerInvalido() {
+  void validateCPFCheckDigits_InvalidDigits_ShouldBeInvalid() {
     assertEquals(
-      "Dígitos verificadores do CPF inválidos",
-      validator.validarDigitosCPF("811.835.170-00")
-    );
+        "Dígitos verificadores do CPF inválidos",
+        validator.validateCPFCheckDigits("811.835.170-00"));
   }
 
-  // ====================== Testes para RG ======================
+  // ====================== RG Tests ======================
 
-  // Caso 1: RG com pontuação completa (ex.: 34.998.152-8) – Deve ser válido
+  // Case 1: RG with full punctuation (e.g.: 34.998.152-8) – Should be valid
   @Test
-  void validarDigitosRG_ComPontuacaoCompleta_DeveSerValido() {
-    assertNull(validator.validarDigitosRG("34.998.152-8"));
+  void validateRGCheckDigit_FullPunctuation_ShouldBeValid() {
+    assertNull(validator.validateRGCheckDigit("34.998.152-8"));
   }
 
-  // Caso 2: RG com pontuação incompleta (ex.: 34.998152-8) – Deve ser válido
+  // Case 2: RG with incomplete punctuation (e.g.: 34.998152-8) – Should be valid
   @Test
-  void validarDigitosRG_ComPontuacaoIncompleta_DeveSerValido() {
-    assertNull(validator.validarDigitosRG("34.998152-8"));
+  void validateRGCheckDigit_IncompletePunctuation_ShouldBeValid() {
+    assertNull(validator.validateRGCheckDigit("34.998152-8"));
   }
 
-  // Caso 3: RG sem pontuação (ex.: 349981528) – Deve ser válido
+  // Case 3: RG without punctuation (e.g.: 349981528) – Should be valid
   @Test
-  void validarDigitosRG_SemPontuacao_DeveSerValido() {
-    assertNull(validator.validarDigitosRG("349981528"));
+  void validateRGCheckDigit_NoPunctuation_ShouldBeValid() {
+    assertNull(validator.validateRGCheckDigit("349981528"));
   }
 
-  // Caso 4: RG com dígito verificador 'X' maiúsculo (ex.: 33.331.427-X) - Deve ser válido
+  // Case 4: RG with uppercase 'X' as check digit (e.g.: 33.331.427-X) – Should be valid
   @Test
-  void validarDigitosRG_ComDigitoX_DeveSerValido() {
-    assertNull(validator.validarDigitosRG("33.331.427-X"));
+  void validateRGCheckDigit_UppercaseX_ShouldBeValid() {
+    assertNull(validator.validateRGCheckDigit("33.331.427-X"));
   }
 
-  // Caso 5: RG com dígito verificador 'x' minúsculo (ex.: 33.331.427-X) - Deve ser válido
+  // Case 5: RG with lowercase 'x' as check digit (e.g.: 33.331.427-x) – Should be valid
   @Test
-  void validarDigitosRG_ComDigitoXMaiusculo_DeveSerValido() {
-    assertNull(validator.validarDigitosRG("33.331.427-x"));
+  void validateRGCheckDigit_LowercaseX_ShouldBeValid() {
+    assertNull(validator.validateRGCheckDigit("33.331.427-x"));
   }
 
-  // Caso 6: RG com todos os números iguais (ex.: 11.111.111-1) – Deve ser inválido
+  // Case 6: RG with all digits equal (e.g.: 11.111.111-1) – Should be invalid
   @Test
-  void validarDigitosRG_DigitosRepetidos_DeveSerInvalido() {
+  void validateRGCheckDigit_AllSameDigits_ShouldBeInvalid() {
     assertEquals(
-      "Dígito verificador do RG inválido",
-      validator.validarDigitosRG("11.111.111-1")
-    );
+        "Dígito verificador do RG inválido", validator.validateRGCheckDigit("11.111.111-1"));
   }
 
-  // Caso 7: RG com dígitos verificadores inválidos (ex.: 33.998.152-9) - Deve ser inválido
+  // Case 7: RG with invalid check digit (e.g.: 34.998.152-9) – Should be invalid
   @Test
-  void validarDigitosRG_DigitoInvalido_DeveSerInvalido() {
+  void validateRGCheckDigit_InvalidDigit_ShouldBeInvalid() {
     assertEquals(
-      "Dígito verificador do RG inválido",
-      validator.validarDigitosRG("34.998.152-9")
-    );
+        "Dígito verificador do RG inválido", validator.validateRGCheckDigit("34.998.152-9"));
   }
 }

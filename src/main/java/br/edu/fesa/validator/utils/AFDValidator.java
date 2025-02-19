@@ -4,10 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 import org.springframework.stereotype.Component;
 
+/**
+ * AFDValidator is responsible for validating the format of documents (CPF and RG) using a
+ * deterministic finite automaton.
+ */
 @Component
 public class AFDValidator {
 
-  public enum Estado {
+  /** Represents the states of the automaton. */
+  public enum State {
     Q0,
     Q1,
     Q2,
@@ -37,103 +42,119 @@ public class AFDValidator {
     Q26
   }
 
-  private final Map<Estado, Map<Character, Estado>> transicoes = new HashMap<>();
+  // Maps each state to its transitions based on the input character
+  private final Map<State, Map<Character, State>> transitions = new HashMap<>();
 
   public AFDValidator() {
-    configurarTransicoes();
+    configureTransitions();
   }
 
-  private void configurarTransicoes() {
-    // Transições principais para CPF e RG
-    transicoes.put(Estado.Q0, criarTransicao(Estado.Q1, null, null, null));
+  /** Configures the state transitions for the automaton. */
+  private void configureTransitions() {
+    // Main transitions for CPF and RG
+    transitions.put(State.Q0, createTransition(State.Q1, null, null, null));
 
-    transicoes.put(Estado.Q1, criarTransicao(Estado.Q2, null, null, null));
+    transitions.put(State.Q1, createTransition(State.Q2, null, null, null));
 
-    transicoes.put(Estado.Q2, criarTransicao(Estado.Q3, null, Estado.Q12, null));
+    transitions.put(State.Q2, createTransition(State.Q3, null, State.Q12, null));
 
-    transicoes.put(Estado.Q3, criarTransicao(Estado.Q4, null, Estado.Q20, null));
+    transitions.put(State.Q3, createTransition(State.Q4, null, State.Q20, null));
 
-    transicoes.put(Estado.Q4, criarTransicao(Estado.Q5, null, null, null));
-    transicoes.put(Estado.Q5, criarTransicao(Estado.Q6, null, Estado.Q17, null));
+    transitions.put(State.Q4, createTransition(State.Q5, null, null, null));
+    transitions.put(State.Q5, createTransition(State.Q6, null, State.Q17, null));
 
-    transicoes.put(Estado.Q6, criarTransicao(Estado.Q7, null, Estado.Q25, null));
+    transitions.put(State.Q6, createTransition(State.Q7, null, State.Q25, null));
 
-    transicoes.put(Estado.Q7, criarTransicao(Estado.Q8, null, null, null));
+    transitions.put(State.Q7, createTransition(State.Q8, null, null, null));
 
-    transicoes.put(Estado.Q8, criarTransicao(Estado.Q9, Estado.Q19, null, Estado.Q18));
+    transitions.put(State.Q8, createTransition(State.Q9, State.Q19, null, State.Q18));
 
-    // Transições para pontuações
-    transicoes.put(Estado.Q12, criarTransicao(Estado.Q13, null, null, null));
-    transicoes.put(Estado.Q13, criarTransicao(Estado.Q14, null, null, null));
-    transicoes.put(Estado.Q14, criarTransicao(Estado.Q15, null, null, null));
-    transicoes.put(Estado.Q15, criarTransicao(Estado.Q16, null, Estado.Q17, null));
-    transicoes.put(Estado.Q16, criarTransicao(Estado.Q7, null, null, null));
-    transicoes.put(Estado.Q17, criarTransicao(Estado.Q16, null, null, null));
+    // Transitions for punctuation
+    transitions.put(State.Q12, createTransition(State.Q13, null, null, null));
+    transitions.put(State.Q13, createTransition(State.Q14, null, null, null));
+    transitions.put(State.Q14, createTransition(State.Q15, null, null, null));
+    transitions.put(State.Q15, createTransition(State.Q16, null, State.Q17, null));
+    transitions.put(State.Q16, createTransition(State.Q7, null, null, null));
+    transitions.put(State.Q17, createTransition(State.Q16, null, null, null));
 
-    // Transições para RG
-    transicoes.put(Estado.Q18, criarTransicao(Estado.Q19, Estado.Q19, null, null));
+    // Transitions for RG
+    transitions.put(State.Q18, createTransition(State.Q19, State.Q19, null, null));
 
-    // Transições para CPF
-    transicoes.put(Estado.Q20, criarTransicao(Estado.Q21, null, null, null));
-    transicoes.put(Estado.Q21, criarTransicao(Estado.Q22, null, null, null));
-    transicoes.put(Estado.Q22, criarTransicao(Estado.Q23, null, null, null));
-    transicoes.put(Estado.Q23, criarTransicao(Estado.Q24, null, Estado.Q25, null));
-    transicoes.put(Estado.Q24, criarTransicao(Estado.Q8, null, null, null));
-    transicoes.put(Estado.Q25, criarTransicao(Estado.Q24, null, null, null));
+    // Transitions for CPF
+    transitions.put(State.Q20, createTransition(State.Q21, null, null, null));
+    transitions.put(State.Q21, createTransition(State.Q22, null, null, null));
+    transitions.put(State.Q22, createTransition(State.Q23, null, null, null));
+    transitions.put(State.Q23, createTransition(State.Q24, null, State.Q25, null));
+    transitions.put(State.Q24, createTransition(State.Q8, null, null, null));
+    transitions.put(State.Q25, createTransition(State.Q24, null, null, null));
 
-    // Estado final CPF
-    transicoes.put(Estado.Q9, criarTransicao(Estado.Q10, null, null, Estado.Q26));
-    transicoes.put(Estado.Q26, criarTransicao(Estado.Q10, null, null, null));
-    transicoes.put(Estado.Q10, criarTransicao(Estado.Q11, null, null, null));
+    // Final state for CPF
+    transitions.put(State.Q9, createTransition(State.Q10, null, null, State.Q26));
+    transitions.put(State.Q26, createTransition(State.Q10, null, null, null));
+    transitions.put(State.Q10, createTransition(State.Q11, null, null, null));
   }
 
-  private Map<Character, Estado> criarTransicao(
-      Estado digito, Estado x, Estado ponto, Estado hifen) {
-    Map<Character, Estado> mapa = new HashMap<>();
+  /**
+   * Creates a transition mapping for a given set of input characters.
+   *
+   * @param digit the state to transition to when a digit (0-9) is encountered
+   * @param x the state to transition to when 'x' or 'X' is encountered
+   * @param dot the state to transition to when a dot is encountered
+   * @param hyphen the state to transition to when a hyphen is encountered
+   * @return a map representing the transitions from a given state
+   */
+  private Map<Character, State> createTransition(State digit, State x, State dot, State hyphen) {
+    Map<Character, State> map = new HashMap<>();
 
-    // Dígitos 0-9
-    if (digito != null) {
+    // Digits 0-9
+    if (digit != null) {
       for (char c = '0'; c <= '9'; c++) {
-        mapa.put(c, digito);
+        map.put(c, digit);
       }
     }
 
-    // Letra X (maiúscula/minúscula)
+    // Letter 'X' (both lowercase and uppercase)
     if (x != null) {
-      mapa.put('x', x);
-      mapa.put('X', x);
+      map.put('x', x);
+      map.put('X', x);
     }
 
-    // Pontuação
-    if (ponto != null) {
-      mapa.put('.', ponto);
+    // Dot punctuation
+    if (dot != null) {
+      map.put('.', dot);
     }
 
-    // Hífen
-    if (hifen != null) {
-      mapa.put('-', hifen);
+    // Hyphen punctuation
+    if (hyphen != null) {
+      map.put('-', hyphen);
     }
 
-    return mapa;
+    return map;
   }
 
-  public String validarDocumento(String documento) {
-    Estado estadoAtual = Estado.Q0;
+  /**
+   * Validates the format of a document using the deterministic finite automaton.
+   *
+   * @param document the document string to validate
+   * @return a message in Portuguese indicating the result of the validation
+   */
+  public String validateDocument(String document) {
+    State currentState = State.Q0;
 
-    for (char c : documento.toCharArray()) {
+    for (char c : document.toCharArray()) {
       c = Character.toLowerCase(c);
-      Map<Character, Estado> transicoesEstado = transicoes.get(estadoAtual);
+      Map<Character, State> stateTransitions = transitions.get(currentState);
 
-      if (transicoesEstado == null || !transicoesEstado.containsKey(c)) {
+      if (stateTransitions == null || !stateTransitions.containsKey(c)) {
         return "Formato inválido: caractere '" + c + "' não permitido";
       }
 
-      estadoAtual = transicoesEstado.get(c);
+      currentState = stateTransitions.get(c);
     }
 
-    // Verifica estados finais
-    if (estadoAtual == Estado.Q11) return "CPF válido";
-    if (estadoAtual == Estado.Q9 || estadoAtual == Estado.Q19) return "RG válido";
+    // Check for final states
+    if (currentState == State.Q11) return "CPF válido";
+    if (currentState == State.Q9 || currentState == State.Q19) return "RG válido";
 
     return "Formato inválido: documento incompleto ou formato incorreto";
   }

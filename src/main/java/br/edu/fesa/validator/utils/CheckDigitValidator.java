@@ -2,26 +2,33 @@ package br.edu.fesa.validator.utils;
 
 import org.springframework.stereotype.Component;
 
+/** CheckDigitValidator is responsible for validating the check digits of CPF and RG documents. */
 @Component
 public class CheckDigitValidator {
 
-  public String validarDigitosCPF(String cpf) {
-    // Implementação da validação dos dígitos do CPF
+  /**
+   * Validates the check digits of a CPF.
+   *
+   * @param cpf the CPF string to validate
+   * @return null if valid, or an error message in Portuguese if invalid
+   */
+  public String validateCPFCheckDigits(String cpf) {
+    // Implementation of CPF check digits validation
     int[] numbers = cpf.replaceAll("[^0-9]", "").chars().map(Character::getNumericValue).toArray();
-    
-    // Verifica se todos os dígitos são iguais
-    boolean todosIguais = true;
+
+    // Check if all digits are the same
+    boolean allSame = true;
     for (int i = 1; i < numbers.length; i++) {
-        if (numbers[i] != numbers[0]) {
-            todosIguais = false;
-            break;
-        }
+      if (numbers[i] != numbers[0]) {
+        allSame = false;
+        break;
+      }
     }
-    if (todosIguais) {
-        return "Dígitos verificadores do CPF inválidos";
+    if (allSame) {
+      return "Dígitos verificadores do CPF inválidos";
     }
 
-    // Cálculo do primeiro dígito
+    // Calculation of the first check digit
     int sum = 0;
     for (int i = 0; i < 9; i++) {
       sum += numbers[i] * (10 - i);
@@ -29,7 +36,7 @@ public class CheckDigitValidator {
     int firstDigit = 11 - (sum % 11);
     if (firstDigit >= 10) firstDigit = 0;
 
-    // Cálculo do segundo dígito
+    // Calculation of the second check digit
     sum = 0;
     for (int i = 0; i < 10; i++) {
       sum += numbers[i] * (11 - i);
@@ -42,10 +49,16 @@ public class CheckDigitValidator {
         : "Dígitos verificadores do CPF inválidos";
   }
 
-  public String validarDigitosRG(String rg) {
-    // Implementação da validação do dígito do RG (exemplo para SP)
+  /**
+   * Validates the check digit of an RG. This example is based on the RG validation for São Paulo.
+   *
+   * @param rg the RG string to validate
+   * @return null if valid, or an error message in Portuguese if invalid
+   */
+  public String validateRGCheckDigit(String rg) {
+    // Implementation of RG check digit validation (example for SP)
     String cleanRg = rg.replaceAll("[^0-9Xx]", "");
-    char digito = Character.toUpperCase(cleanRg.charAt(cleanRg.length() - 1));
+    char digit = Character.toUpperCase(cleanRg.charAt(cleanRg.length() - 1));
 
     int[] numbers =
         cleanRg
@@ -62,6 +75,6 @@ public class CheckDigitValidator {
     int calculated = 11 - (sum % 11);
     char expected = calculated == 10 ? 'X' : (char) (calculated + '0');
 
-    return (digito == expected) ? null : "Dígito verificador do RG inválido";
+    return (digit == expected) ? null : "Dígito verificador do RG inválido";
   }
 }

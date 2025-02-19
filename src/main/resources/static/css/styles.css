@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ========== TEMA LIGHT ========== */
+/* ========== LIGHT THEME ========== */
 .tokyo-bg {
   background-color: #f4f4f8;
 }
@@ -37,7 +37,7 @@
   border-color: #8c4351;
 }
 
-/* ========== TEMA DARK SUAVIZADO ========== */
+/* ========== SOFT DARK THEME ========== */
 .dark .tokyo-bg {
   background-color: #1a1b26;
 }
@@ -66,7 +66,7 @@
   border-color: #51587d;
 }
 
-/* ========== COMPONENTES ========== */
+/* ========== COMPONENTS ========== */
 .theme-toggle {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(4px);
@@ -94,6 +94,7 @@
 [x-cloak] {
   display: none !important;
 }
+/* Hide theme toggle icons based on dark mode */
 html.dark .theme-dark-hidden,
 html:not(.dark) .theme-light-hidden {
   display: none;

@@ -4,100 +4,101 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+/** Unit tests for the AFDValidator class. */
 class AFDValidatorTest {
 
   private final AFDValidator validator = new AFDValidator();
 
-  // ====================== Teste vazio ======================
+  // ====================== Empty String Test ======================
 
-  // String vazia – Deve ser inválido
+  // Empty string – Should be invalid
   @Test
-  void validarDocumento_StringVazia_DeveSerInvalido() {
+  void validateDocument_EmptyString_ShouldBeInvalid() {
     assertEquals(
         "Formato inválido: documento incompleto ou formato incorreto",
-        validator.validarDocumento(""));
+        validator.validateDocument(""));
   }
 
-  // ====================== Testes para CPF ======================
+  // ====================== CPF Tests ======================
 
-  // Caso 1: CPF com pontuação completa (ex.: 811.835.170-09) – Deve ser válido
+  // Case 1: CPF with full punctuation (e.g.: 811.835.170-09) – Should be valid
   @Test
-  void validarCPF_FormatoCompleto_DeveSerValido() {
-    assertEquals("CPF válido", validator.validarDocumento("811.835.170-09"));
+  void validateCPF_FullPunctuation_ShouldBeValid() {
+    assertEquals("CPF válido", validator.validateDocument("811.835.170-09"));
   }
 
-  // Caso 2: CPF com pontuação incompleta (ex.: 811.835170-09) – Deve ser válido
+  // Case 2: CPF with incomplete punctuation (e.g.: 811.835170-09) – Should be valid
   @Test
-  void validarCPF_FormatoIncompleto_DeveSerValido() {
-    assertEquals("CPF válido", validator.validarDocumento("811.835170-09"));
+  void validateCPF_IncompletePunctuation_ShouldBeValid() {
+    assertEquals("CPF válido", validator.validateDocument("811.835170-09"));
   }
 
-  // Caso 3: CPF sem pontuação (ex.: 81183517009) – Deve ser válido
+  // Case 3: CPF without punctuation (e.g.: 81183517009) – Should be valid
   @Test
-  void validarCPF_SemPontuacao_DeveSerValido() {
-    assertEquals("CPF válido", validator.validarDocumento("81183517009"));
+  void validateCPF_NoPunctuation_ShouldBeValid() {
+    assertEquals("CPF válido", validator.validateDocument("81183517009"));
   }
 
-  // Caso 4: CPF com todos os números iguais (ex.: 111.111.111-11) – Deve ser inválido
+  // Case 4: CPF with all digits equal (e.g.: 111.111.111-11) – Should be valid
   @Test
-  void validarCPF_DigitosRepetidosFormatoCorreto_DeveSerValido() {
-    assertEquals("CPF válido", validator.validarDocumento("111.111.111-11"));
+  void validateCPF_AllSameDigits_FormatCorrect_ShouldBeValid() {
+    assertEquals("CPF válido", validator.validateDocument("111.111.111-11"));
   }
 
-  // Caso 5: CPF com caracteres errados (ex.: 123a456b789-0c) – Deve ser inválido
+  // Case 5: CPF with wrong characters (e.g.: 123a456b789-0c) – Should be invalid
   @Test
-  void validarCPF_CaracteresInvalidos_DeveSerInvalido() {
+  void validateCPF_InvalidCharacters_ShouldBeInvalid() {
     assertEquals(
         "Formato inválido: caractere 'a' não permitido",
-        validator.validarDocumento("123a456b789-0c"));
+        validator.validateDocument("123a456b789-0c"));
   }
 
-  // Caso 6: CPF com poucos caracteres (ex.: 1234567890) – Deve ser inválido
+  // Case 6: CPF with too few characters (e.g.: 1234567890) – Should be invalid
   @Test
-  void validarCPF_TamanhoIncorreto_DeveSerInvalido() {
+  void validateCPF_IncorrectLength_ShouldBeInvalid() {
     assertEquals(
         "Formato inválido: documento incompleto ou formato incorreto",
-        validator.validarDocumento("1234567890"));
+        validator.validateDocument("1234567890"));
   }
 
-  // ====================== Testes para RG ======================
+  // ====================== RG Tests ======================
 
-  // Caso 1: RG com pontuação completa (ex.: 34.998.152-8) – Deve ser válido
+  // Case 1: RG with full punctuation (e.g.: 34.998.152-8) – Should be valid
   @Test
-  void validarRG_FormatoCompleto_DeveSerValido() {
-    assertEquals("RG válido", validator.validarDocumento("34.998.152-8"));
+  void validateRG_FullPunctuation_ShouldBeValid() {
+    assertEquals("RG válido", validator.validateDocument("34.998.152-8"));
   }
 
-  // Caso 2: RG com pontuação incompleta (ex.: 34.998152-8) – Deve ser válido
+  // Case 2: RG with incomplete punctuation (e.g.: 34.998152-8) – Should be valid
   @Test
-  void validarRG_FormatoIncompleto_DeveSerValido() {
-    assertEquals("RG válido", validator.validarDocumento("34.998152-8"));
+  void validateRG_IncompletePunctuation_ShouldBeValid() {
+    assertEquals("RG válido", validator.validateDocument("34.998152-8"));
   }
 
-  // Caso 3: RG sem pontuação (ex.: 349981528) – Deve ser válido
+  // Case 3: RG without punctuation (e.g.: 349981528) – Should be valid
   @Test
-  void validarRG_SemPontuacao_DeveSerValido() {
-    assertEquals("RG válido", validator.validarDocumento("349981528"));
+  void validateRG_NoPunctuation_ShouldBeValid() {
+    assertEquals("RG válido", validator.validateDocument("349981528"));
   }
 
-  // Caso 4: RG com todos os números iguais (ex.: 11.111.111-1) – Deve ser inválido
+  // Case 4: RG with all digits equal (e.g.: 11.111.111-1) – Should be valid
   @Test
-  void validarRG_DigitosRepetidosFormatoCorreto_DeveSerValido() {
-    assertEquals("RG válido", validator.validarDocumento("11.111.111-1"));
+  void validateRG_AllSameDigits_FormatCorrect_ShouldBeValid() {
+    assertEquals("RG válido", validator.validateDocument("11.111.111-1"));
   }
 
-  // Caso 5: RG com caracteres errados (ex.: 12a34-56b7) – Deve ser inválido
+  // Case 5: RG with wrong characters (e.g.: 12a34-56b7) – Should be invalid
   @Test
-  void validarRG_CaracteresInvalidos_DeveSerInvalido() {
+  void validateRG_InvalidCharacters_ShouldBeInvalid() {
     assertEquals(
-        "Formato inválido: caractere 'a' não permitido", validator.validarDocumento("12a34-56b7"));
+        "Formato inválido: caractere 'a' não permitido", validator.validateDocument("12a34-56b7"));
   }
 
-  // Caso 6: RG com poucos caracteres (ex.: 12345678) – Deve ser inválido
+  // Case 6: RG with too few characters (e.g.: 12345678) – Should be invalid
   @Test
-  void validarRG_TamanhoIncorreto_DeveSerInvalido() {
+  void validateRG_IncorrectLength_ShouldBeInvalid() {
     assertEquals(
         "Formato inválido: documento incompleto ou formato incorreto",
-        validator.validarDocumento("12345678"));
+        validator.validateDocument("12345678"));
   }
 }

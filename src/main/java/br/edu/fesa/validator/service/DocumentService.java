@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/** Service class for validating documents. */
 @Service
 public class DocumentService {
 
@@ -22,75 +23,101 @@ public class DocumentService {
     this.checkDigitValidator = checkDigitValidator;
   }
 
-  public DocumentResultModel validateDocument(String documento) {
+  /**
+   * Validates a single document.
+   *
+   * @param document the document to be validated
+   * @return a DocumentResult containing validation details
+   */
+  public DocumentResultModel validateDocument(String document) {
     DocumentResultModel result = new DocumentResultModel();
-    result.setDocumento(documento);
+    result.setDocument(document);
 
-    // Validação 1: Dígitos repetidos
-    boolean digitosRepetidos = validarDigitosRepetidos(documento);
-    result.setDigitosRepetidos(digitosRepetidos);
+    // Validation 1: Check for repeated digits
+    boolean repeatedDigits = checkRepeatedDigits(document);
+    result.setRepeatedDigits(repeatedDigits);
 
-    // Validação 2: Formato do documento
-    String formatoValido = afdValidator.validarDocumento(documento);
-    boolean formatoOK = formatoValido.startsWith("CPF") || formatoValido.startsWith("RG");
-    result.setFormatoValido(formatoOK);
+    // Validation 2: Check the document format
+    String formatResult = afdValidator.validateDocument(document);
+    boolean formatOK = formatResult.startsWith("CPF") || formatResult.startsWith("RG");
+    result.setValidFormat(formatOK);
 
-    // Validação 3: Dígitos verificadores (se formato válido)
-    boolean digitosVerificadoresOK = false;
-    if (formatoOK) {
+    // Validation 3: Validate check digits (if format is valid)
+    boolean checkDigitsValid = false;
+    if (formatOK) {
       try {
-        String erro =
-            formatoValido.startsWith("CPF")
-                ? checkDigitValidator.validarDigitosCPF(documento)
-                : checkDigitValidator.validarDigitosRG(documento);
-
-        digitosVerificadoresOK = (erro == null);
+        String error =
+            formatResult.startsWith("CPF")
+                ? checkDigitValidator.validateCPFCheckDigits(document)
+                : checkDigitValidator.validateRGCheckDigit(document);
+        checkDigitsValid = (error == null);
       } catch (Exception e) {
-        digitosVerificadoresOK = false;
+        checkDigitsValid = false;
       }
     }
-    result.setDigitosVerificadoresOK(digitosVerificadoresOK);
+    result.setCheckDigitsValid(checkDigitsValid);
 
-    // Resultado final
-    result.setValidado(!digitosRepetidos && formatoOK && digitosVerificadoresOK);
-    result.setMensagem(gerarMensagem(result));
+    // Final validation: the document is valid if no repeated digits, format is correct, and check
+    // digits are valid
+    result.setValidated(!repeatedDigits && formatOK && checkDigitsValid);
+    result.setMessage(generateMessage(result));
 
     return result;
   }
 
-  public List<DocumentResultModel> validateDocuments(String documentos) {
-    return Arrays.stream(documentos.split("\n"))
+  /**
+   * Validates multiple documents provided in a newline-separated string.
+   *
+   * @param documents a string containing multiple documents separated by newline
+   * @return a list of DocumentResult objects for each document
+   */
+  public List<DocumentResultModel> validateDocuments(String documents) {
+    return Arrays.stream(documents.split("\n"))
         .filter(line -> !line.isBlank())
         .map(String::trim)
         .map(this::validateDocument)
         .collect(Collectors.toList());
   }
 
-  private boolean validarDigitosRepetidos(String documento) {
-    String numeros = documento.replaceAll("[^0-9]", "");
-    return numeros.matches("^(\\d)\\1+$");
+  /**
+   * Checks if the document consists of repeated digits.
+   *
+   * @param document the document to check
+   * @return true if the document has all repeated digits, false otherwise
+   */
+  private boolean checkRepeatedDigits(String document) {
+    String numbers = document.replaceAll("[^0-9]", "");
+    return numbers.matches("^(\\d)\\1+$");
   }
 
-  private String gerarMensagem(DocumentResultModel result) {
-    StringBuilder mensagem = new StringBuilder();
+  /**
+   * Generates a validation message based on the validation result. The message remains in
+   * Portuguese.
+   *
+   * @param result the DocumentResult containing validation details
+   * @return a message describing the validation result
+   */
+  private String generateMessage(DocumentResultModel result) {
+    StringBuilder message = new StringBuilder();
 
-    if (result.isValidado()) {
+    if (result.isValidated()) {
       return "Documento válido";
     }
 
-    mensagem.append("Documento inválido: ");
-    List<String> erros = new ArrayList<>();
+    message.append("Documento inválido: ");
+    List<String> errors = new ArrayList<>();
 
-    if (result.isDigitosRepetidos()) {
-      erros.add("dígitos repetidos");
+    if (result.isRepeatedDigits()) {
+      errors.add("dígitos repetidos");
     }
-    if (!result.isFormatoValido()) {
-      erros.add("formato inválido");
+    if (!result.isValidFormat()) {
+      errors.add("formato inválido");
     }
-    if (result.isFormatoValido() && !result.isDigitosVerificadoresOK()) {
-      erros.add("dígitos verificadores incorretos");
+    if (result.isValidFormat() && !result.isCheckDigitsValid()) {
+      errors.add("dígitos verificadores incorretos");
     }
 
-    return mensagem.append(String.join(" + ", erros)).toString();
+    message.append(String.join(" + ", errors));
+    return message.toString();
   }
 }
