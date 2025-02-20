@@ -39,7 +39,11 @@ public class AFDValidator {
     Q23,
     Q24,
     Q25,
-    Q26
+    Q26,
+    Q27,
+    Q28,
+    Q29,
+    Q30
   }
 
   // Maps each state to its transitions based on the input character
@@ -51,47 +55,42 @@ public class AFDValidator {
 
   /** Configures the state transitions for the automaton. */
   private void configureTransitions() {
-    // Main transitions for CPF and RG
+    // Main transitions for numbers (0-9)
     transitions.put(State.Q0, createTransition(State.Q1, null, null, null));
-
     transitions.put(State.Q1, createTransition(State.Q2, null, null, null));
-
     transitions.put(State.Q2, createTransition(State.Q3, null, State.Q12, null));
-
-    transitions.put(State.Q3, createTransition(State.Q4, null, State.Q20, null));
-
+    transitions.put(State.Q3, createTransition(State.Q4, null, State.Q22, null));
     transitions.put(State.Q4, createTransition(State.Q5, null, null, null));
-    transitions.put(State.Q5, createTransition(State.Q6, null, State.Q17, null));
-
-    transitions.put(State.Q6, createTransition(State.Q7, null, State.Q25, null));
-
+    transitions.put(State.Q5, createTransition(State.Q6, null, State.Q20, null));
+    transitions.put(State.Q6, createTransition(State.Q7, null, State.Q29, null));
     transitions.put(State.Q7, createTransition(State.Q8, null, null, null));
+    transitions.put(State.Q8, createTransition(State.Q9, State.Q19, null, State.Q21));
+    transitions.put(State.Q9, createTransition(State.Q10, null, null, State.Q30)); // Final state
+    transitions.put(State.Q10, createTransition(State.Q11, null, null, null));
+    transitions.put(State.Q11, createTransition(null, null, null, null)); // Final state
 
-    transitions.put(State.Q8, createTransition(State.Q9, State.Q19, null, State.Q18));
-
-    // Transitions for punctuation
+    // Punctuation handling (RG path)
     transitions.put(State.Q12, createTransition(State.Q13, null, null, null));
     transitions.put(State.Q13, createTransition(State.Q14, null, null, null));
     transitions.put(State.Q14, createTransition(State.Q15, null, null, null));
-    transitions.put(State.Q15, createTransition(State.Q16, null, State.Q17, null));
-    transitions.put(State.Q16, createTransition(State.Q7, null, null, null));
-    transitions.put(State.Q17, createTransition(State.Q16, null, null, null));
+    transitions.put(State.Q15, createTransition(State.Q16, null, State.Q20, null));
+    transitions.put(State.Q16, createTransition(State.Q17, null, null, null));
+    transitions.put(State.Q17, createTransition(State.Q18, null, null, null));
+    transitions.put(State.Q18, createTransition(State.Q19, State.Q19, null, State.Q21));
+    transitions.put(State.Q19, createTransition(null, null, null, null)); // Final state
+    transitions.put(State.Q20, createTransition(State.Q16, null, null, null));
+    transitions.put(State.Q21, createTransition(State.Q19, State.Q19, null, null));
 
-    // Transitions for RG
-    transitions.put(State.Q18, createTransition(State.Q19, State.Q19, null, null));
-
-    // Transitions for CPF
-    transitions.put(State.Q20, createTransition(State.Q21, null, null, null));
-    transitions.put(State.Q21, createTransition(State.Q22, null, null, null));
+    // Punctuation handling (CPF path)
     transitions.put(State.Q22, createTransition(State.Q23, null, null, null));
-    transitions.put(State.Q23, createTransition(State.Q24, null, State.Q25, null));
-    transitions.put(State.Q24, createTransition(State.Q8, null, null, null));
-    transitions.put(State.Q25, createTransition(State.Q24, null, null, null));
-
-    // Final state for CPF
-    transitions.put(State.Q9, createTransition(State.Q10, null, null, State.Q26));
-    transitions.put(State.Q26, createTransition(State.Q10, null, null, null));
-    transitions.put(State.Q10, createTransition(State.Q11, null, null, null));
+    transitions.put(State.Q23, createTransition(State.Q24, null, null, null));
+    transitions.put(State.Q24, createTransition(State.Q25, null, null, null));
+    transitions.put(State.Q25, createTransition(State.Q26, null, State.Q29, null));
+    transitions.put(State.Q26, createTransition(State.Q27, null, null, null));
+    transitions.put(State.Q27, createTransition(State.Q28, null, null, null));
+    transitions.put(State.Q28, createTransition(State.Q10, null, null, State.Q30));
+    transitions.put(State.Q29, createTransition(State.Q26, null, null, null));
+    transitions.put(State.Q30, createTransition(State.Q10, null, null, null));
   }
 
   /**
