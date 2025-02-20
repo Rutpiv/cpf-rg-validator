@@ -48,6 +48,7 @@
 ### Automaton Diagram
 ![Automaton Diagram](docs/images/automaton.png)  
 *Finite State Machine with Transition Rules*
+📥 [Download JFLAP Project File](./docs/jflap/automaton.jff)
 
 <details>
   <summary>📊 Complete Transition Table (Enum-based States)</summary>
@@ -57,30 +58,34 @@
 | → Q0  | Q1       | ❌       | ❌       | ❌       |
 | Q1    | Q2       | ❌       | ❌       | ❌       |
 | Q2    | Q3       | ❌       | Q12      | ❌       |
-| Q3    | Q4       | ❌       | Q20      | ❌       |
+| Q3    | Q4       | ❌       | Q22      | ❌       |
 | Q4    | Q5       | ❌       | ❌       | ❌       |
-| Q5    | Q6       | ❌       | Q17      | ❌       |
-| Q6    | Q7       | ❌       | Q25      | ❌       |
+| Q5    | Q6       | ❌       | Q20      | ❌       |
+| Q6    | Q7       | ❌       | Q29      | ❌       |
 | Q7    | Q8       | ❌       | ❌       | ❌       |
-| Q8    | Q9       | Q19      | ❌       | Q18      |
-| Q9 *  | Q10      | ❌       | ❌       | Q26      |
+| Q8    | Q9       | Q19      | ❌       | Q21      |
+| Q9 *  | Q10      | ❌       | ❌       | Q30      |
 | Q10   | Q11      | ❌       | ❌       | ❌       |
 | Q11 * | ❌       | ❌       | ❌       | ❌       |
 | Q12   | Q13      | ❌       | ❌       | ❌       |
 | Q13   | Q14      | ❌       | ❌       | ❌       |
 | Q14   | Q15      | ❌       | ❌       | ❌       |
-| Q15   | Q16      | ❌       | Q17      | ❌       |
-| Q16   | Q7       | ❌       | ❌       | ❌       |
-| Q17   | Q16      | ❌       | ❌       | ❌       |
-| Q18   | Q19      | Q19      | ❌       | ❌       |
+| Q15   | Q16      | ❌       | Q20      | ❌       |
+| Q16   | Q17      | ❌       | ❌       | ❌       |
+| Q17   | Q18      | ❌       | ❌       | ❌       |
+| Q18   | Q19      | Q19      | ❌       | Q21      |
 | Q19 * | ❌       | ❌       | ❌       | ❌       |
-| Q20   | Q21      | ❌       | ❌       | ❌       |
-| Q21   | Q22      | ❌       | ❌       | ❌       |
+| Q20   | Q16      | ❌       | ❌       | ❌       |
+| Q21   | Q19      | Q19      | ❌       | ❌       |
 | Q22   | Q23      | ❌       | ❌       | ❌       |
-| Q23   | Q24      | ❌       | Q25      | ❌       |
-| Q24   | Q8       | ❌       | ❌       | ❌       |
-| Q25   | Q24      | ❌       | ❌       | ❌       |
-| Q26   | Q10      | ❌       | ❌       | ❌       |
+| Q23   | Q24      | ❌       | ❌       | ❌       |
+| Q24   | Q25      | ❌       | ❌       | ❌       |
+| Q25   | Q26      | ❌       | Q29      | ❌       |
+| Q26   | Q27      | ❌       | ❌       | ❌       |
+| Q27   | Q28      | ❌       | ❌       | ❌       |
+| Q28   | Q10      | ❌       | ❌       | Q30      |
+| Q29   | Q26      | ❌       | ❌       | ❌       |
+| Q30   | Q10      | ❌       | ❌       | ❌       |
 
 *(Implemented using Java Enums and HashMaps)*
 </details>
@@ -176,6 +181,6 @@ Students from **Engenheiro Salvador Arena College**:
 ---
 
 <div align="center">
-  <sub>Built with ♥ by Computer Engineering students</sub>  
+  <sub>Built with ♥ by Computer Engineering students</sub><br>
   <sub>Compilers Course Project • 2025 Semester</sub>
 </div>
